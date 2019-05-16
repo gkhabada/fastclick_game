@@ -8,7 +8,7 @@ const result = document.querySelector('#result')
 let gameResult = 0
 
 start.addEventListener('click', (e) => {
-
+  gameResult = 0
   let t = Number(time.innerHTML)
   if (t >= 0) {
     e.target.style.display = 'none'
@@ -26,18 +26,31 @@ b.addEventListener('click', (e) => {
   if(e.target.className === 'game-block') {
     gameResult++
     removeBlock(e.target)
-    showBlock()
+    addBlock()
   }
 })
 
-function showBlock() {
+function addBlock() {
+  // create block
   let gameBlock = document.createElement('div')
   gameBlock.classList.add('game-block')
+
+  // width and height
   let hw = Math.floor((Math.random()) * 100)
   hw < 20 ? hw += 40 : hw < 40 ? hw += 30 : null
   gameBlock.style.width = hw + 'px'
   gameBlock.style.height = hw + 'px'
-  gameBlock.style.backgroundColor = "#0a5"
+
+  // set random background color
+  gameBlock.style.backgroundColor = generateColor()
+
+  //position left and top
+  let pl = Math.floor((Math.random()) * 300)
+  let pt = Math.floor((Math.random()) * 300)
+  pl + hw > 300 ? pl -= hw : pl
+  pt + hw > 300 ? pt -= hw : pt
+  gameBlock.style.left = pl + 'px'
+  gameBlock.style.top = pt + 'px'
 
   game.appendChild(gameBlock)
 }
@@ -46,12 +59,15 @@ function removeBlock(block) {
   block.remove()
 }
 
+function generateColor() {
+  return '#' + Math.floor(Math.random()*16777215).toString(16)
+}
+
 function timer(t) {
-  showBlock()
+  addBlock()
   let timerId = setInterval(() => {
     t -= 0.1
-    t = t.toFixed(1)
-    time.innerHTML = t
+    time.innerHTML = t = t.toFixed(1)
 
     if (t === '0.0') {
       clearTimeout(timerId);
@@ -62,16 +78,22 @@ function timer(t) {
 
 function finished() {
   removeBlock(document.querySelector('.game-block'))
+  gameResult === 0 ? result.style.color = 'red' : result.style.color = 'green'
   result.innerHTML = gameResult
   resultHeader.classList.remove('hide')
-  start.style.display = 'block'
+  setTimeout(() => {
+    start.style.display = 'block'
+  }, 1000)
   game.style.backgroundColor = '#ccc'
   gameTime.disabled = false;
   gameTime.style.backgroundColor = "#fff"
-  alert(`Finish. Your result ${gameResult} points.`)
+
+  gameTime.value <= 0 ? time.innerHTML = '5.0' : time.innerHTML = gameTime.value + '.0'
+  console.log(`Finish. Your result ${gameResult} points.`)
 }
 
 gameTime.addEventListener('input', (e) => {
   let value = e.target.value.replace(/[^-0-9]/gim, '')
+  value <= 0 ? value = '5' : value
   value.split('').length !== 0 ? time.innerHTML = value + '.0' : time.innerHTML = '5.0'
 })
