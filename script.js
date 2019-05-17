@@ -3,6 +3,7 @@ const start = document.querySelector('#start')
 const game = document.querySelector('#game')
 const time = document.querySelector('#time')
 const gameTime = document.querySelector('#game-time')
+const gameSize = game.getBoundingClientRect()
 
 const resultHeader = document.querySelector('#result-header')
 const result = document.querySelector('#result')
@@ -41,23 +42,32 @@ function addBlock() {
   gameBlock.classList.add('game-block')
 
   // width and height
-  let hw = Math.floor((Math.random()) * 100)
-  hw < 20 ? hw += 40 : hw < 40 ? hw += 30 : null
-  gameBlock.style.width = hw + 'px'
-  gameBlock.style.height = hw + 'px'
+  let blockSize = getRandom(40, 80)
+
+  // старый код
+  gameBlock.style.width = gameBlock.style.height = blockSize + 'px'
 
   // set random background color
   gameBlock.style.backgroundColor = generateColor()
 
   //position left and top
-  let pl = Math.floor((Math.random()) * 300)
-  let pt = Math.floor((Math.random()) * 300)
-  pl + hw > 300 ? pl -= hw : pl
-  pt + hw > 300 ? pt -= hw : pt
-  gameBlock.style.left = pl + 'px'
-  gameBlock.style.top = pt + 'px'
+  let maxTop = gameSize.height - blockSize
+  let maxLeft = gameSize.width - blockSize
 
-  game.appendChild(gameBlock)
+  let blockLeft = getRandom(0, maxTop)
+  let blockTop = getRandom(0, maxLeft)
+
+  gameBlock.style.left = blockLeft + 'px'
+  gameBlock.style.top = blockTop + 'px'
+
+  // добавляем блок в поле
+  // game.appendChild(gameBlock)
+  //аналогичный вариан с урока
+  game.insertAdjacentElement('afterbegin', gameBlock)
+}
+
+function getRandom(min, max) {
+  return Math.floor((Math.random()) * (max - min) + min)
 }
 
 function removeBlock(block) {
@@ -73,8 +83,7 @@ function timer(t) {
   let timerId = setInterval(() => {
     t -= 0.1
     time.innerHTML = t = t.toFixed(1)
-
-    if (t === '0.0') {
+    if (+t < 0) {
       clearTimeout(timerId);
       finished()
     }
