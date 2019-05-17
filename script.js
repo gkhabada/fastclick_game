@@ -3,9 +3,14 @@ const start = document.querySelector('#start')
 const game = document.querySelector('#game')
 const time = document.querySelector('#time')
 const gameTime = document.querySelector('#game-time')
+
 const resultHeader = document.querySelector('#result-header')
 const result = document.querySelector('#result')
 let gameResult = 0
+let gameRecord = 0
+
+const recordHeader = document.querySelector('#record-header')
+const record = document.querySelector('#record')
 
 start.addEventListener('click', (e) => {
   gameResult = 0
@@ -87,13 +92,40 @@ function finished() {
   game.style.backgroundColor = '#ccc'
   gameTime.disabled = false;
   gameTime.style.backgroundColor = "#fff"
-
   gameTime.value <= 0 ? time.innerHTML = '5.0' : time.innerHTML = gameTime.value + '.0'
+  saveRecord()
   console.log(`Finish. Your result ${gameResult} points.`)
 }
 
 gameTime.addEventListener('input', (e) => {
   let value = e.target.value.replace(/[^-0-9]/gim, '')
   value <= 0 ? value = '5' : value
+  value > 60 ? value = '60' : value
   value.split('').length !== 0 ? time.innerHTML = value + '.0' : time.innerHTML = '5.0'
+
+  resultHeader.classList.add('hide')
+  // checking record
+  getRecord()
 })
+
+function saveRecord() {
+  let oldRecord = localStorage.getItem(time.innerText)
+  if(gameResult > Number(oldRecord) || oldRecord === null) {
+
+    localStorage.setItem(time.innerText, gameResult)
+    console.log(`You set new record on ${time} time - ${gameResult} points`)
+    record.innerText = gameResult
+  }
+}
+
+function getRecord() {
+  let oldRecord = localStorage.getItem(time.innerText)
+  if(oldRecord === null) {
+    recordHeader.classList.add('hide')
+    record.innerText = 0
+  } else {
+    recordHeader.classList.remove('hide')
+    record.innerText = oldRecord
+  }
+}
+getRecord()

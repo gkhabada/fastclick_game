@@ -13,10 +13,13 @@ body {
   align-items: center;
   padding: 20px;
   overflow: hidden;
+
   background: linear-gradient(#CB356B, #BD3F32);
 }
 
 .app {
+  height: 95vh;
+  overflow-y: auto;
   background: #fff;
   padding: 20px;
   width: 600px;
@@ -78,6 +81,7 @@ body {
 
 .game {
   position: relative;
+  overflow: hidden;
   /* display: flex;
   align-items: center;
   justify-content: center; */
